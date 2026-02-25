@@ -63,21 +63,18 @@ def generate_dataset(output_filename, samples_per_case=3, checkpoint_num=0):
                 mistake = random.choice(AGENT_MISTAKES)
             try:
                 chat_data = generate_chat(current_id, intent, case_type, personality, mistake)
+                dataset.append(chat_data)
             except:
                 print("Failed to generate chat. Skipping.")
-            dataset.append(chat_data)
+                continue
             if checkpoint_num != 0 and current_id % checkpoint_num == 0:
                 print("Checkpoint writing. Writing to", path)
                 try:
                     with open(path, 'w') as file:
                         json.dump(dataset, file, indent=4)
+                    current_id += 1
                 except:
                     print("Failed to write checkpoint.")
-            current_id += 1
-    print("Generation successful. Writing to", path)
+    print(f"Generated {current_id - 1}/{len(CASE_TYPES) * samples_per_case}. Writing to", path)
     with open(path, 'w') as file:
         json.dump(dataset, file, indent=4)
-
-
-if __name__ == "__main__":
-    generate_dataset("dataset`.json", 3, 2)
