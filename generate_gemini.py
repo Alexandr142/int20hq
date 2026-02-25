@@ -4,18 +4,21 @@ import random
 import time
 import re
 from tqdm import tqdm
-from google import genai
-from google.genai import types
+from groq import Groq
 
+# Импорты из твоего проекта
 from src.prompts import CHAT_GENERATION_PROMPT
 from src.config import *
 
 # Инициализация клиента
-client = genai.Client(api_key="AIzaSyAWSmy8azfYG0dzPqWqz5Z73U3fbN6asGI")
+# gsk_... — это ключ Groq. Убедись, что библиотека установлена: pip install groq
+client = Groq(api_key="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")
 
 
 def generate_chat(data_id, intent, case_type, personality, agent_mistake="none"):
     agent_mistake = agent_mistake if case_type == "agent_mistake" else "none"
+
+    # Формируем промпт, используя данные из config.py
     prompt = CHAT_GENERATION_PROMPT.format(
         intent=intent,
         case_type=case_type,
@@ -24,42 +27,35 @@ def generate_chat(data_id, intent, case_type, personality, agent_mistake="none")
         mistake=agent_mistake
     )
 
-    config = types.GenerateContentConfig(
-        temperature=0.7,
-        response_mime_type="application/json",
-    )
-
     try:
-        # Используем стабильную модель 2026 года
-        response = client.models.generate_content(
-            model="gemini-2.5-flash-lite",
-            contents=prompt,
-            config=config
+        # Запрос к Llama 3 через Groq
+        completion = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[
+                {"role": "system",
+                 "content": "You are a professional dataset generator. Respond ONLY with JSON containing a 'messages' list."},
+                {"role": "user", "content": prompt}
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.7,
         )
 
-        res_json = json.loads(response.text)
+        # Парсим JSON из ответа
+        res_json = json.loads(completion.choices[0].message.content)
 
-        # Универсальный парсинг (если список или словарь с ключом)
         if isinstance(res_json, list):
             return res_json
         return res_json.get("messages", [])
 
     except Exception as e:
         error_msg = str(e)
-
-        # Обработка лимита 429 (минутного или дневного)
+        # Если превышен лимит запросов (Rate Limit)
         if "429" in error_msg:
-            # Пытаемся найти время ожидания в тексте ошибки
-            wait_match = re.search(r"retry in (\d+)", error_msg)
-            wait_seconds = int(wait_match.group(1)) + 2 if wait_match else 30
-
-            print(f"\n[!] Лимит исчерпан. Ожидание {wait_seconds}с для ID {data_id}...")
-            time.sleep(wait_seconds)
-
-            # Повторяем попытку для этого же ID
+            print(f"\n[!] Лимит Groq. Ожидание 10с для ID {data_id}...")
+            time.sleep(10)
             return generate_chat(data_id, intent, case_type, personality, agent_mistake)
 
-        print(f"\n[!] Критическая ошибка ID {data_id}: {e}")
+        print(f"\n[!] Ошибка Groq ID {data_id}: {e}")
         return None
 
 
@@ -67,7 +63,7 @@ def generate_dataset(output_filename, samples_per_case=2):
     path = "data/" + output_filename
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
-    # Загружаем существующие данные, чтобы не перезаписывать их
+    # Загружаем старые данные, чтобы продолжить, а не перезаписывать
     dataset = []
     if os.path.exists(path):
         try:
@@ -75,12 +71,11 @@ def generate_dataset(output_filename, samples_per_case=2):
                 dataset = json.load(file)
             print(f"Загружено {len(dataset)} существующих записей.")
         except:
-            print("Файл пуст или поврежден, начинаем заново.")
+            print("Начинаем новый файл.")
 
-    # Вычисляем актуальный ID
+    # Считаем ID
     current_id = max([item['id'] for item in dataset], default=0) + 1
-
-    print(f"Запуск генерации (модель: gemini-2.5-flash)...")
+    print(f"Запуск генерации через Groq (модель llama3-8b-8192)...")
 
     for case_type in CASE_TYPES:
         print(f"Генерация кейсов типа: {case_type}")
@@ -91,7 +86,6 @@ def generate_dataset(output_filename, samples_per_case=2):
 
             chat_messages = generate_chat(current_id, intent, case_type, personality, mistake)
 
-            # Сохраняем только успешную генерацию
             if chat_messages:
                 dataset.append({
                     "id": current_id,
@@ -105,16 +99,16 @@ def generate_dataset(output_filename, samples_per_case=2):
                 })
                 current_id += 1
 
-                # Сохраняем после каждого успешного чата (защита от вылета)
+                # Сохраняем после каждого шага
                 with open(path, 'w', encoding='utf-8') as file:
                     json.dump(dataset, file, indent=4, ensure_ascii=False)
 
-            # Базовая пауза для соблюдения RPM
-            time.sleep(5)
+            # У Groq лимиты выше, пауза может быть минимальной
+            time.sleep(1)
 
-    print(f"\nГотово! Всего записей в {path}: {len(dataset)}")
+    print(f"\nГотово! Файл сохранен: {path}")
 
 
 if __name__ == "__main__":
-    # samples_per_case — сколько штук каждого типа из CASE_TYPES сделать
-    generate_dataset("test_gemini_new.json", 3)
+    # 5 — это сколько чатов сделать для каждого типа из CASE_TYPES
+    generate_dataset("test_groq_data.json", 5)
