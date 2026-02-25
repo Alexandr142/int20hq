@@ -1,4 +1,4 @@
-MODEL = "llama3"
+MODEL = "llama"
 
 INTENTS = ["payment_issue", "technical_issue", "account_access", "tariff_refund"]
 
