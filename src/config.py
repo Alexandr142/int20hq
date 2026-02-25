@@ -1,8 +1,20 @@
-MODEL = "llama"
+MODEL = "llama3"
 
-INTENTS = ["payment_issue", "technical_issue", "account_access", "tariff_refund"]
+INTENTS = [
+    "payment_issue",
+    "technical_issue",
+    "account_access",
+    "tariff_refund"
+]
 
-CASE_TYPES = ["success", "fail", "conflict", "agent_mistake", "hidden_unsatisfaction"]
+CASE_TYPES = [
+    "success",
+    "fail",
+    "conflict",
+    "agent_mistake",
+    "problematic",
+    "hidden_unsatisfaction"
+]
 
 PERSONALITIES = [
     {
@@ -14,10 +26,48 @@ PERSONALITIES = [
         "traits": "writes politely, less typos."
     },
     {
-        "type": "quick-tempered",
-        "traits": "wants issue to be solved immediately otherwise starts conflict, when aggressive more typos and might"
-                  "write in capslock."
+        "type": "senior",
+        "traits": "confuses terms, needs simple steps, polite but slow."
     },
+    {
+        "type": "exec",
+        "traits": "short sentences, expects speed, values time over small talk."
+    },
+    {
+        "type": "detailer",
+        "traits": "structured lists, technical accuracy, polite but demanding."
+    },
+    {
+        "type": "mobile",
+        "traits": "typos, abbreviations, delayed responses, multi-tasking."
+    },
+    {
+        "type": "loyalist",
+        "traits": "friendly, expects personal touch, mentions long history."
+    },
+    {
+        "type": "skeptic",
+        "traits": "already troubleshooting, asks deep questions, doubts basics."
+    },
+    {
+        "type": "chaotic",
+        "traits": "might use unusual slang and abbreviations."
+    },
+    {
+        "type": "uneducated",
+        "traits": "many spelling errors, grammatically incorrect sentences, swearing words."
+    }
 ]
 
-AGENT_MISTAKES = ["ignored_question", "incorrect_info", "rude_tone", "no_resolution", "unnecessary_escalation"]
+AGENT_MISTAKES = [
+    "ignored_question",
+    "incorrect_info",
+    "rude_tone",
+    "no_resolution",
+    "unnecessary_escalation",
+    "robotic_responses",
+    "overly_complex_jargon",
+    "premature_closing",
+    "lack_of_empathy",
+    "repeated_questions"
+]

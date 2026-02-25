@@ -1,4 +1,4 @@
-from src.prompts import CHAT_GENERATION_PROMPT
+from src.prompts import *
 from src.config import *
 from tqdm import tqdm
 import ollama
@@ -14,10 +14,11 @@ def generate_chat(data_id, intent, case_type, personality, agent_mistake="none")
                                            personality_type=personality["type"],
                                            personality_traits=personality["traits"],
                                            mistake=agent_mistake)
+    prompt += SPECIAL_REQUIREMENTS.get(case_type, "")
+
     response = ollama.generate(model=MODEL, prompt=prompt, format="json", options={"temperature": 0.7})
     raw_data = response["response"]
 
-    # Cleaning JSON response
     match = re.search(r'(\{.*\}|\[.*\])', raw_data, re.DOTALL)
     clean_json = match.group(1) if match else raw_data
 
@@ -50,6 +51,7 @@ def generate_dataset(output_filename, samples_per_case=3, checkpoint_num=0):
             print("Successfully read file.")
         except:
             print("Failed to read file. After generation file will rewritten!")
+
     print("Starting generation...")
     for case_type in CASE_TYPES:
         print(f"Generating chats for '{case_type}' case ...")
@@ -78,4 +80,4 @@ def generate_dataset(output_filename, samples_per_case=3, checkpoint_num=0):
 
 
 if __name__ == "__main__":
-    print(json.dumps(generate_chat(1, INTENTS[3], "conflict")))
+    generate_dataset("2.json", 3, 2)
