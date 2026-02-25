@@ -64,6 +64,7 @@ def generate_dataset(output_filename, samples_per_case=3, checkpoint_num=0):
             try:
                 chat_data = generate_chat(current_id, intent, case_type, personality, mistake)
                 dataset.append(chat_data)
+                current_id += 1
             except:
                 print("Failed to generate chat. Skipping.")
                 continue
@@ -72,7 +73,6 @@ def generate_dataset(output_filename, samples_per_case=3, checkpoint_num=0):
                 try:
                     with open(path, 'w') as file:
                         json.dump(dataset, file, indent=4)
-                    current_id += 1
                 except:
                     print("Failed to write checkpoint.")
     print(f"Generated {current_id - 1}/{len(CASE_TYPES) * samples_per_case}. Writing to", path)
