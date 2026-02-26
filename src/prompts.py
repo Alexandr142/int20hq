@@ -6,6 +6,7 @@ Customer personality: {personality_type}
 Customer traits: {personality_traits}
 Agent mistake: {mistake}
 Requirements:
+- Each dialogue must greet the agent different ways(Hello, Good afternoon, Good evening, Hi, Good morning, etc.) or don't greet at all
 - Use natural language with occasional typos and slang depending on customer personality, but don't over do it.
 - Generate 3-10 messages for chat 
 IMPORTANT: Return ONLY JSON list of messages. Use ONLY "role" and "text" fields.
