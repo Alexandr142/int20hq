@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama_service
+    volumes:
+      - ollama_storage:/root/.ollama
+    ports:
+      - "11434:11434"
+
+  app:
+    build: .
+    container_name: int20h_app
+    depends_on:
+      - ollama
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    volumes:
+      - ./data:/app/data
+    tty: true
+    stdin_open: true
