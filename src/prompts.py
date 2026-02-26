@@ -6,6 +6,7 @@ Customer personality: {personality_type}
 Customer traits: {personality_traits}
 Agent mistake: {mistake}
 Requirements:
+- Each dialogue must greet the agent different ways(Hello, Good afternoon, Good evening, Hi, Good morning, etc.) or don't greet at all
 - Use natural language with occasional typos and slang depending on customer personality, but don't over do it.
 - Generate 3-10 messages for chat 
 IMPORTANT: Return ONLY JSON list of messages. Use ONLY "role" and "text" fields.
@@ -35,7 +36,7 @@ SPECIAL_REQUIREMENTS = {
         """,
     "agent_mistake": """
         \nSPECIAL REQUIREMENT: The agent must commit the following error: '{mistake}'.
-        - If 'ignored_question': Agent answers only one part of a multi-part query and skips the rest.
+        - If 'ignored_question': Client asks multi-part question. Agent answers only part of it and leaves rest unanswered.
         - If 'incorrect_info': Agent gives a wrong technical step, incorrect price, or misleading policy info.
         - If 'rude_tone': Agent is passive-aggressive, uses phrases like 'As I already said' or 'Read the manual'.
         - If 'no_resolution': Agent refuses to help, says 'I can't do anything', and effectively abandons the issue.
