@@ -80,6 +80,16 @@ def labels_distribution(database):
     }
 
 
+def delete_empty_chats(filename, output_filename):
+    with open(get_data_path(filename), 'r', encoding='utf-8') as f:
+        database = json.load(f)
+
+    database = [chat for chat in database if len(chat["chat"]) != 0]
+
+    with open(get_data_path(output_filename), 'w', encoding='utf-8') as f:
+        json.dump(database, f, indent=4)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Utility tools for dataset management")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
@@ -89,18 +99,25 @@ if __name__ == "__main__":
     merge_parser.add_argument("--inputs", nargs="+", required=True, help="List of files to merge")
     merge_parser.add_argument("--output", default="merged_dataset.json", help="Output filename")
 
-    # Example: python utils.py stats --input dataset.json
+    # Example: python utils.py stats --input a.json
     stats_parser = subparsers.add_parser("stats", help="Show dataset distribution statistics")
     stats_parser.add_argument("--input", required=True, help="Database filename to analyze")
+
+    # Example: python utils.py del_empty --input a.json --output b.json
+    stats_parser = subparsers.add_parser("del_empty", help="Delete empty chats from database")
+    stats_parser.add_argument("--input", required=True, help="Input database filename")
+    stats_parser.add_argument("--output", required=True, help="Output database filename")
 
     args = parser.parse_args()
 
     if args.command == "merge":
         concat_json_databases(args.inputs, args.output)
-
     elif args.command == "stats":
         results = labels_distribution(args.input)
         if results:
             print(json.dumps(results, indent=4))
+    elif args.command == "del_empty":
+        delete_empty_chats(args.input, args.output)
+
 
 

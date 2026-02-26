@@ -53,7 +53,13 @@ class ChatGenerator:
         )
 
         clean_json = self._clean_json(response["response"])
-        messages = json.loads(clean_json).get("messages", [])
+        messages = json.loads(clean_json)
+
+        # Ignored question mistake handling
+        messages = messages.get("messages", []) if agent_mistake != "ignored_question" else [messages]
+
+        if len(messages) == 0:
+            raise Exception("Generated empty chat")
 
         return {
             "id": data_id,
@@ -66,11 +72,11 @@ class ChatGenerator:
             "chat": messages
         }
 
-    def save_data(self, dataset, filename):
+    def save_data(self, filename):
         """Saves current dataset into a file."""
         path = os.path.join(self.output_dir, filename)
         with open(path, 'w', encoding='utf-8') as f:
-            json.dump(dataset, f, indent=4, ensure_ascii=False)
+            json.dump(self.dataset, f, indent=4, ensure_ascii=False)
 
     def run(self, output_filename, samples_per_case=3, checkpoint_num=5):
         """Generator cycle."""
@@ -106,9 +112,9 @@ class ChatGenerator:
 
                 # Checkpoint
                 if checkpoint_num > 0 and current_id % checkpoint_num == 0:
-                    self.save_data(self.dataset, output_filename)
+                    self.save_data(output_filename)
 
-        self.save_data(self.dataset, output_filename)
+        self.save_data(output_filename)
         print(f"[+] Done! Saved {len(self.dataset)} chats to {path}")
 
 
