@@ -172,7 +172,7 @@ def run_analysis(input_file, output_file):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input", default="data/test.json")
+    parser.add_argument("--input", default="data/dataset.json")
     parser.add_argument("--output", default="data/evaluated_test.json")
     args = parser.parse_args()
 
