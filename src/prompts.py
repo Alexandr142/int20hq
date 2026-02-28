@@ -7,6 +7,7 @@ Customer traits: {personality_traits}
 Agent mistake: {mistake}
 Requirements:
 - Each dialogue must greet the agent different ways(Hello, Good afternoon, Good evening, Hi, Good morning, etc.) or don't greet at all
+- It is forbidden to put {mistake} and other system indicators into dialogs.
 - Use natural language with occasional typos and slang depending on customer personality, but don't over do it.
 - Generate 3-10 messages for chat 
 IMPORTANT: Return ONLY JSON list of messages. Use ONLY "role" and "text" fields.
@@ -51,5 +52,20 @@ SPECIAL_REQUIREMENTS = {
         \nSPECIAL REQUIREMENT: The customer must end the chat with 'Thank you' or 'Okay, I see', 
         but the dialogue must clearly show that their actual problem was NOT resolved.
         The satisfaction level here is technically 'unsatisfied'.
+        """
+}
+
+INTENT_REQUIREMENTS = {
+    "payment_issue": """
+        INTENT SCENARIO: Billing, card rejection, or double charging.
+        """,
+    "technical_issue": """
+        INTENT SCENARIO: App crashes, bugs, or slow performance.
+        """,
+    "account_access": """
+        INTENT SCENARIO: Login problems, password resets, or 2FA.
+        """,
+    "tariff_refund": """
+        INTENT SCENARIO: Refund requests or plan cancellations.
         """
 }
