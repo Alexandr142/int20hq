@@ -1,4 +1,3 @@
-Ось фінальна, вилизана версія README.md англійською мовою. Вона враховує всі наші виправлення в Docker, структуру папок та особливості запуску.
 🛡️ AI-Powered Customer Support QA & Dataset Generator
 
 An advanced automated system designed to generate high-fidelity synthetic support dialogues and perform deep quality analysis using LLMs (Llama 3 via Ollama). This tool helps companies evaluate support agent performance at scale without manual auditing.
@@ -85,3 +84,4 @@ project_root/
 ├── analyze.py          # QA evaluation script
 ├── Dockerfile          # App container definition
 └── docker-compose.yml  # Multi-container orchestration (App + Ollama)
+
