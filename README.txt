@@ -8,5 +8,5 @@ To run the project in standard mode start with the generation script by executin
 
 For a containerized setup ensure that Docker and Docker Compose are installed and running. You can initiate the entire pipeline including environment configuration by using the command docker-compose up --build. This command automatically handles the dependencies and script execution within the container environment.
 
-
 Team: DumaAI
+
