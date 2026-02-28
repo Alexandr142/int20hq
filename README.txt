@@ -85,3 +85,10 @@ project_root/
 ├── Dockerfile          # App container definition
 └── docker-compose.yml  # Multi-container orchestration (App + Ollama)
 
+
+________                           _____  .___ 
+\______ \  __ __  _____ _____     /  _  \ |   |
+ |    |  \|  |  \/     \\__  \   /  /_\  \|   |
+ |    `   \  |  /  Y Y  \/ __ \_/    |    \   |
+/_______  /____/|__|_|  (____  /\____|__  /___|
+        \/            \/     \/         \/     
